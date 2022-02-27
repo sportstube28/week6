@@ -24,7 +24,6 @@ podTemplate(containers: [
            try {
                    sh '''
                    pwd
-                          cd Chapter08/sample1
                    ./gradlew jacocoTestCoverageVerification
                    ./gradlew jacocoTestReport
                    '''
@@ -40,7 +39,6 @@ podTemplate(containers: [
            try {
                    sh '''
                    pwd
-                          cd Chapter08/sample1
                    ./gradlew jacocoTestCoverageVerification
                    ./gradlew checkstyleMain
                    '''
