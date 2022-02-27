@@ -35,7 +35,7 @@ podTemplate(containers: [
               reportName: "JaCoCo Report"
             ])
         stage("jacoco checkstyle") {
-          echo "My Code coverage branch is: ${env.BRANCH_NAME} branch"
+          echo "My jacoco checkstyle branch is: ${env.BRANCH_NAME} branch"
           if ( env.BRANCH_NAME == "feature") 
            try {
                    sh '''
