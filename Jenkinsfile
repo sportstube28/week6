@@ -17,23 +17,6 @@ podTemplate(containers: [
                     ./gradlew test
                     '''
                     }
-        stage("Code coverage") {
-          echo "My Code coverage branch is: ${env.BRANCH_NAME} branch"
-          if ( env.BRANCH_NAME == "main") 
-           try {
-                   sh '''
-                   pwd
-                   ./gradlew jacocoTestCoverageVerification
-                   ./gradlew jacocoTestReport
-                   '''
-            } catch (Exception E) {
-                echo 'Failure detected'
-            }
-            publishHTML (target: [
-              reportDir: 'build/reports/jacoco/test/html',
-              reportFiles: 'index.html',
-              reportName: "JaCoCo Report"
-            ])
         stage("jacoco checkstyle") {
           echo "My jacoco checkstyle branch is: ${env.BRANCH_NAME} branch"
           if ( env.BRANCH_NAME == "feature") 
