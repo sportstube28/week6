@@ -18,9 +18,8 @@ podTemplate(containers: [
                     '''
                     }
         stage("Code coverage") {
-           when {
-               branch 'main'
-               }
+          echo "My Code coverage branch is: ${env.BRANCH_NAME} branch"
+          if ( env.BRANCH_NAME == "main") 
            try {
                    sh '''
                    pwd
