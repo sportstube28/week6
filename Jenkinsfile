@@ -9,7 +9,7 @@ podTemplate(containers: [
 
     node(POD_LABEL) {
         stage('Run pipeline against a gradle project') {
-           git url: 'https://github.com/sportstube28/week6.git' 
+           git branch: 'main', url: 'https://github.com/sportstube28/week6.git' 
             container('gradle') {
                 stage('Build a gradle project') {
                     sh '''
