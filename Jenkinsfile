@@ -9,7 +9,7 @@ podTemplate(containers: [
 
     node(POD_LABEL) {
         stage('Run pipeline against a gradle project') {
-           git url: 'https://github.com/sportstube28/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git' 
+           git url: 'https://github.com/sportstube28/week6.git' 
             container('gradle') {
                 stage('Build a gradle project') {
                     sh '''
