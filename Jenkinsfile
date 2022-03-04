@@ -26,7 +26,7 @@ podTemplate(yaml: '''
             items:
             - key: .dockerconfigjson
               path: config.json
-''') {
+''')
 // podTemplate(containers: [
 //     containerTemplate(
 //         name: 'gradle',
