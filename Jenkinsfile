@@ -3,12 +3,12 @@ podTemplate(yaml: '''
     kind: Pod
     spec:
       containers:
-      - name: maven
-        image: maven:3.8.1-jdk-8
+      - name: gradle
+        image: gradle:6.3-jdk14
         command:
         - sleep
         args:
-        - 99d
+        - 30d
       - name: kaniko
         image: gcr.io/kaniko-project/executor:debug
         command:
@@ -27,28 +27,47 @@ podTemplate(yaml: '''
             - key: .dockerconfigjson
               path: config.json
 ''') {
-podTemplate(containers: [
-    containerTemplate(
-        name: 'gradle',
-        image: 'gradle:6.3-jdk14',
-        command: 'sleep',
-        args: '30d'
-        ),
-])   {
-
+// podTemplate(containers: [
+//     containerTemplate(
+//         name: 'gradle',
+//         image: 'gradle:6.3-jdk14',
+//         command: 'sleep',
+//         args: '30d'
+//         ),
+// ])
+   {
     node(POD_LABEL) {
         stage('Run pipeline against a gradle project') {
            git branch: 'main', url: 'https://github.com/sportstube28/week6.git'
             container('gradle') {
+                stage('Set Variables') {
+                  if ( env.BRANCH_NAME == "main") {
+                    env.image_name = "calculator"
+                    env.version = "1.0"
+                  }
+                  if ( env.BRANCH_NAME == "feature") {
+                    env.image_name = "calculator-feature"
+                    env.version = "0.1"
+                  }
+                }
                 stage('Build a gradle project') {
+                  if ( env.BRANCH_NAME == "palyground") {
                     sh '''
                     chmod +x gradlew
-                    ./gradlew test
+                    ./gradlew -x test
                     '''
                     }
+                    else
+                    {
+                      sh '''
+                      chmod +x gradlew
+                      ./gradlew
+                      '''
+                    }
+                  }
         stage("jacoco checkstyle") {
           echo "My jacoco checkstyle branch is: ${env.BRANCH_NAME} branch"
-          if ( env.BRANCH_NAME == "feature")
+          if ( env.BRANCH_NAME != "feature")
            try {
                    sh '''
                    pwd
@@ -72,11 +91,10 @@ podTemplate(containers: [
       container('kaniko') {
         stage('Build a Go project') {
           sh '''
-            /kaniko/executor --context `pwd` --destination bibinwilson/hello-kaniko:1.0
+            /kaniko/executor --context `pwd` --destination ${env.image_name}:${env.version}
           '''
         }
       }
     }
-
   }
 }
