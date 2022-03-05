@@ -9,9 +9,6 @@ podTemplate(yaml: '''
         - sleep
         args:
         - 30d
-        volumeMounts:
-        - name:shared-storage
-          mountPath: /mnt
       - name: kaniko
         image: gcr.io/kaniko-project/executor:debug
         command:
@@ -23,8 +20,6 @@ podTemplate(yaml: '''
           mountPath: /kaniko/.docker
       restartPolicy: Never
       volumes:
-      - name:shared-storage
-        persistentVolumeClaim:claimName: jenkins-pv-claim
       - name: kaniko-secret
         secret:
             secretName: dockercred
@@ -56,47 +51,28 @@ podTemplate(yaml: '''
                   }
                 }
                 stage('Build a gradle project') {
-                  if ( env.BRANCH_NAME == "main") {
+                  if ( env.BRANCH_NAME == "palyground") {
                     sh '''
-                    ./gradlew build
-                    mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar
-                    /mnt '''
+                    chmod +x gradlew
+                    ./gradlew -x test
+                    '''
                     }
-                //    else
-                //     {
-                //       sh '''
-                //       chmod +x gradlew
-                //       ./gradlew
-                //       '''
-                //     }
-                //   }
-              }
+                    else
+                    {
+                      sh '''
+                      chmod +x gradlew
+                      ./gradlew
+                      '''
+                    }
+                  }
         stage("jacoco checkstyle") {
           echo "My jacoco checkstyle branch is: ${env.BRANCH_NAME} branch"
-          if ( env.BRANCH_NAME != "main")
-           {
-             try {
-                     sh '''
-                     pwd
-                     ./gradlew jacocoTestCoverageVerification
-                     ./gradlew checkstyleMain
-                     '''
-              } catch (Exception E) {
-                  echo 'Failure detected'
-              }
-              publishHTML (target: [
-                reportDir: 'build/reports/jacoco/test/html',
-                reportFiles: 'index.html',
-                reportName: "JaCoCocheckstyle Report"
-             ])
-           }
-         }
-        stage("Code coverage") {
+          if ( env.BRANCH_NAME != "feature")
            try {
                    sh '''
                    pwd
                    ./gradlew jacocoTestCoverageVerification
-                   ./gradlew jacocoTestReport
+                   ./gradlew checkstyleMain
                    '''
             } catch (Exception E) {
                 echo 'Failure detected'
@@ -104,25 +80,19 @@ podTemplate(yaml: '''
             publishHTML (target: [
               reportDir: 'build/reports/jacoco/test/html',
               reportFiles: 'index.html',
-              reportName: "JaCoCo Report"
+              reportName: "JaCoCocheckstyle Report"
             ])
         }
-      }
-    }
-         stage('Build Java Image') {
+     }
+   }
+  stage('Build Java Image') {
     container('kaniko') {
-      stage('Build a container') {
+      stage('Build a Go project') {
         sh '''
-        echo 'FROM openjdk:8-jre' > Dockerfile
-        echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar' >>
-        Dockerfile echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >>
-        Dockerfile
-        mv /mnt/calculator-0.0.1-SNAPSHOT.jar .
-        /kaniko/executor --context `pwd` --destination devopscourse28/${env.image_name}:${env.version}
+          /kaniko/executor --context `pwd` --destination ${env.image_name}:${env.version}
         '''
       }
     }
   }
-   }
- }
-
+}
+}
