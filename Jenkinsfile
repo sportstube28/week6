@@ -72,23 +72,27 @@ podTemplate(yaml: '''
                 //       '''
                 //     }
                 //   }
+              }
         stage("jacoco checkstyle") {
           echo "My jacoco checkstyle branch is: ${env.BRANCH_NAME} branch"
           if ( env.BRANCH_NAME != "main")
-           try {
-                   sh '''
-                   pwd
-                   ./gradlew jacocoTestCoverageVerification
-                   ./gradlew checkstyleMain
-                   '''
-            } catch (Exception E) {
-                echo 'Failure detected'
-            }
-            publishHTML (target: [
-              reportDir: 'build/reports/jacoco/test/html',
-              reportFiles: 'index.html',
-              reportName: "JaCoCocheckstyle Report"
-           ])
+           {
+             try {
+                     sh '''
+                     pwd
+                     ./gradlew jacocoTestCoverageVerification
+                     ./gradlew checkstyleMain
+                     '''
+              } catch (Exception E) {
+                  echo 'Failure detected'
+              }
+              publishHTML (target: [
+                reportDir: 'build/reports/jacoco/test/html',
+                reportFiles: 'index.html',
+                reportName: "JaCoCocheckstyle Report"
+             ])
+           }
+         }
         stage("Code coverage") {
            try {
                    sh '''
@@ -105,6 +109,8 @@ podTemplate(yaml: '''
               reportName: "JaCoCo Report"
             ])
         }
+      }
+    }
          stage('Build Java Image') {
     container('kaniko') {
       stage('Build a container') {
@@ -119,5 +125,6 @@ podTemplate(yaml: '''
       }
     }
   }
-     }
    }
+ }
+
