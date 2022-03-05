@@ -89,11 +89,11 @@ podTemplate(yaml: '''
                   echo 'Failure detected'
               }
                recordIssues tool: checkStyle()
-              publishHTML (target: [
-                reportDir: 'build/reports/jacoco/test/html',
-                reportFiles: 'index.html',
-                reportName: "JaCoCocheckstyle Report"
-             ])
+//              publishHTML (target: [
+//                reportDir: 'build/reports/jacoco/test/html',
+//               reportFiles: 'index.html',
+//              reportName: "JaCoCocheckstyle Report"
+//             ])
            }
          }
         stage("Code coverage") {
