@@ -60,8 +60,8 @@ podTemplate(yaml: '''
                   if ( env.BRANCH_NAME == "main") {
                     sh '''
                     ./gradlew build
-                    mv /build/libs/calculator-0.0.1-SNAPSHOT.jar
-                    /mnt '''
+                    mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt
+                    '''
                     }
                 //    else
                 //     {
