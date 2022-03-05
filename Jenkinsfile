@@ -59,13 +59,13 @@ podTemplate(yaml: '''
                   }
                 }
                 stage('Build a gradle project') {
-                  if ( env.BRANCH_NAME == "main") {
+//                  if ( env.BRANCH_NAME == "main") {
                     sh '''
                     ./gradlew build
                     mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt
                     ls -ltr /mnt
                     '''
-                    }
+//                   }
                 //    else
                 //     {
                 //       sh '''
@@ -88,6 +88,7 @@ podTemplate(yaml: '''
               } catch (Exception E) {
                   echo 'Failure detected'
               }
+               recordIssues tool: checkStyle()
               publishHTML (target: [
                 reportDir: 'build/reports/jacoco/test/html',
                 reportFiles: 'index.html',
@@ -118,6 +119,9 @@ podTemplate(yaml: '''
     }
 }
          stage('Build Java Image') {
+           echo "My jacoco checkstyle branch is: ${env.BRANCH_NAME} branch"
+           if ( env.BRANCH_NAME != "playground")
+            {
     container('kaniko') {
       stage('Build a container') {
         sh '''
@@ -134,4 +138,4 @@ podTemplate(yaml: '''
   }
    }
  }
-
+}
