@@ -77,12 +77,12 @@ podTemplate(yaml: '''
               }
         stage("jacoco checkstyle") {
           echo "My jacoco checkstyle branch is: ${env.BRANCH_NAME} branch"
-          if ( env.BRANCH_NAME != "main")
+          if ( env.BRANCH_NAME != "playground")
            {
              try {
                      sh '''
                      pwd
-                     ./gradlew jacocoTestCoverageVerification
+#                     ./gradlew jacocoTestCoverageVerification
                      ./gradlew checkstyleMain
                      '''
               } catch (Exception E) {
@@ -96,6 +96,9 @@ podTemplate(yaml: '''
            }
          }
         stage("Code coverage") {
+          echo "My jacoco checkstyle branch is: ${env.BRANCH_NAME} branch"
+          if ( env.BRANCH_NAME == "main")        
+           {
            try {
                    sh '''
                    pwd
@@ -113,6 +116,7 @@ podTemplate(yaml: '''
         }
       }
     }
+}
          stage('Build Java Image') {
     container('kaniko') {
       stage('Build a container') {
@@ -122,8 +126,8 @@ podTemplate(yaml: '''
         echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile
         ls -ltr /mnt
         mv /mnt/calculator-0.0.1-SNAPSHOT.jar calculator-0.0.1-SNAPSHOT.jar
-#        /kaniko/executor --context `pwd` --destination devopscourse28/${env.image_name}:${env.version}
-        /kaniko/executor --context `pwd` --destination devopscourse28/calculator:1.0
+        /kaniko/executor --context `pwd` --destination devopscourse28/{env.image_name}:{env.version}
+#        /kaniko/executor --context `pwd` --destination devopscourse28/calculator:1.0
         '''
       }
     }
