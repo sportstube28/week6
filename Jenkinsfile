@@ -105,9 +105,7 @@ podTemplate(yaml: '''
               reportName: "JaCoCo Report"
             ])
         }
-     }
-   }
-  stage('Build Java Image') {
+         stage('Build Java Image') {
     container('kaniko') {
       stage('Build a container') {
         sh '''
@@ -121,3 +119,5 @@ podTemplate(yaml: '''
       }
     }
   }
+     }
+   }
